@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Mess Queue Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <header class="glass header">
+            <div class="logo">
+                <i class="fas fa-utensils"></i>
+                <h1>Smart Mess Queue</h1>
+            </div>
+            <div class="header-time">
+                <i class="fas fa-clock"></i>
+                <span id="currentTime"></span>
+            </div>
+        </header>
+
+        <main class="glass main-content" id="mainContent">
+            <!-- Welcome Screen -->
+            <div id="welcomeScreen">
+                <div class="welcome-icon">
+                    <i class="fas fa-restaurant"></i>
+                </div>
+                <h2>Welcome to Smart Mess</h2>
+                <p class="subtitle">Token-based queue management system with AI predictions</p>
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="showStudentMenu()">
+                        <i class="fas fa-user-graduate"></i> Student
+                    </button>
+                    <button class="btn btn-secondary" onclick="showAdminLogin()">
+                        <i class="fas fa-user-shield"></i> Admin
+                    </button>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span id="totalWaiting">0</span>
+                        <label>Waiting</label>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span id="totalServed">0</span>
+                        <label>Served Today</label>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span id="avgTime">0</span>
+                        <label>Avg Wait (min)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Menu -->
+            <div id="studentMenu" style="display:none;">
+                <div class="menu-header">
+                    <button class="btn-back" onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
+                    <h2><i class="fas fa-user-graduate"></i> Student Menu</h2>
+                </div>
+                <div class="menu-grid">
+                    <div class="menu-card" onclick="generateToken()">
+                        <i class="fas fa-ticket-alt"></i>
+                        <h3>Generate Token</h3>
+                        <p>Get your queue token</p>
+                    </div>
+                    <div class="menu-card" onclick="viewQueuePosition()">
+                        <i class="fas fa-list-ol"></i>
+                        <h3>View Queue Position</h3>
+                        <p>Check your status</p>
+                    </div>
+                    <div class="menu-card" onclick="viewWaitingTime()">
+                        <i class="fas fa-brain"></i>
+                        <h3>AI Prediction</h3>
+                        <p>Smart wait time</p>
+                    </div>
+                    <div class="menu-card" onclick="cancelToken()">
+                        <i class="fas fa-times-circle"></i>
+                        <h3>Cancel Token</h3>
+                        <p>Remove from queue</p>
+                    </div>
+                    <div class="menu-card" onclick="viewHistory()">
+                        <i class="fas fa-history"></i>
+                        <h3>Token History</h3>
+                        <p>View past records</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Login -->
+            <div id="adminLogin" style="display:none;">
+                <div class="menu-header">
+                    <button class="btn-back" onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
+                    <h2><i class="fas fa-user-shield"></i> Admin Login</h2>
+                </div>
+                <div class="login-form">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="adminUser" placeholder="Username" value="admin">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="adminPass" placeholder="Password" value="admin123">
+                    </div>
+                    <button class="btn btn-primary" onclick="adminLogin()">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admin Menu -->
+            <div id="adminMenu" style="display:none;">
+                <div class="menu-header">
+                    <button class="btn-back" onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
+                    <h2><i class="fas fa-user-shield"></i> Admin Panel</h2>
+                </div>
+                <div class="menu-grid">
+                    <div class="menu-card" onclick="adminViewQueue()">
+                        <i class="fas fa-eye"></i>
+                        <h3>View Queue</h3>
+                        <p>See all waiting</p>
+                    </div>
+                    <div class="menu-card" onclick="adminCallNext()">
+                        <i class="fas fa-forward"></i>
+                        <h3>Call Next</h3>
+                        <p>Serve next student</p>
+                    </div>
+                    <div class="menu-card" onclick="adminViewReports()">
+                        <i class="fas fa-chart-bar"></i>
+                        <h3>View Reports</h3>
+                        <p>Daily statistics</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Display -->
+            <div id="resultDisplay" style="display:none;">
+                <div class="result-content">
+                    <div id="resultIcon"></div>
+                    <h3 id="resultTitle"></h3>
+                    <div id="resultBody"></div>
+                    <button class="btn btn-primary" onclick="closeResult()">
+                        <i class="fas fa-check"></i> OK
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <footer class="glass footer">
+            <p>&copy; 2026 Smart Mess Queue Manager | <i class="fas fa-robot"></i> AI Powered</p>
+        </footer>
+    </div>
+
+    <!-- SMS Modal -->
+    <div class="modal" id="smsModal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <i class="fas fa-sms"></i>
+                <h3>SMS Alert</h3>
+            </div>
+            <div class="modal-body">
+                <p>Your Token Number: <strong id="smsToken">101</strong></p>
+                <p id="smsMessage">Please come to the mess.</p>
+            </div>
+            <button class="btn btn-primary" onclick="closeSMS()">
+                <i class="fas fa-check"></i> OK
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
